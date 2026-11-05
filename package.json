@@ -3,15 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 4200",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4200",
     "lint": "eslint"
   },
   "dependencies": {
+    "agora-rtc-sdk-ng": "4.24.9",
+    "astronomy-engine": "2.1.19",
+    "clsx": "^2.1.1",
+    "firebase": "12.19.0",
+    "lucide-react": "^1.63.0",
     "next": "16.3.8",
+    "pdfkit": "0.17.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

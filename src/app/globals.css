@@ -1,26 +1,376 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+ * Design tokens
+ * Brand: bhagwa (saffron) + white — no black. White is the canvas;
+ * saffron is the accent (actions, highlights, the Kaal Chakra motif).
+ *   brand-* = bhagwa (#F26B1D), gold-* = light saffron tints.
+ * Text is a warm deep brown, never pure black.
+ * Semantic tokens (bg, surface, text...) switch with the theme.
+ * ------------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #fff7f0;
+  --text: #2a1709;
+  --text-muted: #6e5444;
+  --border: #f3e1d0;
+  --ring: #c2410c;
+  --accent-text: #c2410c; /* saffron text on white (AA) */
+}
+
+.dark {
+  --bg: #0f0804;
+  --surface: #1a0f08;
+  --surface-muted: #24150b;
+  --text: #fdf3ea;
+  --text-muted: #c9a991;
+  --border: #3a2414;
+  --ring: #fb8a3c;
+  --accent-text: #fdae74;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins), var(--font-inter), var(--font-devanagari), ui-sans-serif, system-ui, sans-serif;
+  /* Headings: Marcellus (inscription-like serif) — Devanagari falls back to Noto Sans Devanagari */
+  --font-display: var(--font-marcellus), var(--font-devanagari), ui-serif, Georgia, serif;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Logo saffron. 600+ carry white text (WCAG AA); 300–500 carry dark text. */
+  --color-brand-50: #fff6ed;
+  --color-brand-100: #ffead5;
+  --color-brand-200: #fed0aa;
+  --color-brand-300: #fdae74;
+  --color-brand-400: #fb8a3c;
+  --color-brand-500: #f26b1d;
+  --color-brand-600: #c2410c;
+  --color-brand-700: #9a3412;
+  --color-brand-800: #7c2d12;
+  --color-brand-900: #6a260f;
+  --color-brand-950: #431407;
+
+  /* Light saffron accent (logo glow) */
+  --color-gold-100: #fff7ed;
+  --color-gold-200: #ffedd5;
+  --color-gold-300: #fed7aa;
+  --color-gold-400: #fdba74;
+  --color-gold-500: #fb923c;
+  --color-gold-600: #c2410c;
+  --color-gold-700: #9a3412;
+
+  --color-online: #16a34a;
+  --color-busy: #f59e0b;
+  --color-offline: #9ca3af;
+
+  --animate-pulse-dot: pulse-dot 1.6s ease-in-out infinite;
+  --animate-orbit: orbit 80s linear infinite;
+  --animate-orbit-reverse: orbit 80s linear infinite reverse;
+  --animate-orbit-fast: orbit 14s linear infinite;
+  --animate-orbit-mid: orbit 22s linear infinite reverse;
+  --animate-orbit-slow: orbit 34s linear infinite;
+  --animate-sun-pulse: sun-pulse 5s ease-in-out infinite;
+  --animate-sun-rays: orbit 40s linear infinite;
+  --animate-twinkle: twinkle 3s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.6s ease-in-out;
+  --animate-glow: glow 2.8s ease-in-out infinite;
+
+  --animate-sheet-up: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-dialog-in: dialog-in 0.2s ease-out;
+
+  @keyframes sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes dialog-in {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes orbit {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes sun-pulse {
+    0%, 100% { box-shadow: 0 0 60px 10px rgb(251 138 60 / 0.45), inset 0 0 30px rgb(255 255 255 / 0.25); transform: scale(1); }
+    50% { box-shadow: 0 0 110px 30px rgb(251 138 60 / 0.65), inset 0 0 40px rgb(255 255 255 / 0.35); transform: scale(1.04); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.35); }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0) scale(1); }
+    30% { transform: rotate(-8deg) scale(1.12); }
+    60% { transform: rotate(6deg) scale(1.12); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgb(255 255 255 / 0.55), 0 4px 14px rgb(124 45 18 / 0.25); }
+    50% { box-shadow: 0 0 0 10px rgb(255 255 255 / 0), 0 4px 14px rgb(124 45 18 / 0.25); }
   }
 }
 
+/* Firebase phone login's invisible reCAPTCHA badge (bottom-right): hidden, but kept in the page and working.
+   visibility (never display:none, which can stop reCAPTCHA from running). Google's required notice is shown
+   in the login form instead (LoginForm.js → RecaptchaNotice). The image challenge, when Google asks for one,
+   is a separate pop-up and still appears. */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
+/* Soft pulse for CelestialBackdrop's sun (plain CSS: used from an arbitrary animation value) */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+/* Cards inside a revealed section rise one after another. `animation` + `backwards` (not transition-delay)
+   so it plays once and never delays the cards' own hover transitions afterwards. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+}
+.reveal[data-reveal="shown"] .reveal-stagger > * {
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+.reveal-stagger > :nth-child(2) { --i: 1; }
+.reveal-stagger > :nth-child(3) { --i: 2; }
+.reveal-stagger > :nth-child(4) { --i: 3; }
+.reveal-stagger > :nth-child(5) { --i: 4; }
+.reveal-stagger > :nth-child(6) { --i: 5; }
+.reveal-stagger > :nth-child(n + 7) { --i: 6; }
+
+/* Soft light sweep across a banner every few seconds (parent needs overflow-hidden) */
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.22) 48%, transparent 62%);
+  transform: translateX(-120%);
+  animation: shine 7s ease-in-out infinite;
+}
+@keyframes shine {
+  0%, 65% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Scroll reveal (components/ui/Reveal.js): only elements that start below the fold get data-reveal. */
+.reveal {
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .reveal[data-reveal="shown"] .reveal-stagger > *,
+  .shine::after {
+    animation: none;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Very wide (2K/4K, or a zoomed-out browser): scale rem-based type and spacing up gently
+     (16px → max 18px) so the page keeps its proportions instead of looking tiny and empty. */
+  @media (width >= 2200px) {
+    html {
+      font-size: clamp(16px, calc(16px + (100vw - 2200px) * 0.004), 18px);
+    }
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+  /* Marcellus has one weight: never fake-bold it (headings keep their font-bold classes for Devanagari) */
+  .font-display {
+    font-synthesis-weight: none;
+    letter-spacing: 0.005em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Tailwind v4 resets buttons to the default arrow; restore the hand cursor on everything clickable */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  [role="radio"],
+  select,
+  summary,
+  label[for],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
+/* Page container. Grows on large / zoomed-out screens so content doesn't sit in a narrow strip
+   with empty bands either side (laptops and phones are unchanged). */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 1536px) {
+    max-width: 90rem;
+    padding-inline: 2rem;
+  }
+  @media (width >= 1920px) {
+    max-width: 100rem;
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Saffron band (CTAs, highlights): bhagwa gradient + faint chakra rings. Use sparingly — the site is white-first. */
+@utility bg-cosmic {
+  background-image:
+    radial-gradient(circle at 88% 18%, transparent 0 56px, rgb(255 255 255 / 0.16) 57px 58px, transparent 59px 96px, rgb(255 255 255 / 0.12) 97px 98px, transparent 99px 140px, rgb(255 255 255 / 0.08) 141px 142px, transparent 143px),
+    radial-gradient(ellipse at 10% 100%, rgb(253 186 116 / 0.35), transparent 55%),
+    linear-gradient(135deg, #f58233, #f26b1d 45%, #d4500e);
+}
+
+/* Soft saffron glow on white (hero, feature sections) */
+@utility bg-aura {
+  background-image:
+    radial-gradient(ellipse 60% 55% at 78% 40%, rgb(251 138 60 / 0.14), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 8% 0%, rgb(253 186 116 / 0.18), transparent 70%);
+}
+
+/* Small uppercase label above section titles */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+/* Saffron hairline that fades at both ends (section dividers) */
+@utility hairline {
+  height: 1px;
+  background-image: linear-gradient(90deg, transparent, var(--color-brand-300), transparent);
+}
+
+@utility text-gradient-gold {
+  /* Headline on saffron bands: white → light saffron */
+  background-image: linear-gradient(90deg, #ffffff, #ffffff 40%, var(--color-gold-200));
+  background-clip: text;
+  color: transparent;
+}
+
+/* ------------------------------------------------------------------
+ * Google Translate: keep the widget off-screen and hide Google's own UI
+ * (top banner, hover tooltips, highlight). <LanguageToggle /> replaces it.
+ * ------------------------------------------------------------------ */
+.google-translate-host {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  top: 0 !important;
+}
+.goog-te-banner-frame,
+iframe.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-yAWNEb-L7lbkb {
+  display: none !important;
+}
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* ------------------------------------------------------------------
+ * Blog articles written in the dashboard's rich-text editor (sanitised HTML from the API).
+ * Sizes / colours / alignment the writer chose come as inline styles and win over these defaults.
+ * ------------------------------------------------------------------ */
+.article-html { color: color-mix(in srgb, var(--text) 92%, transparent); font-size: 1.0625rem; line-height: 1.8; overflow-wrap: anywhere; }
+@media (min-width: 640px) { .article-html { font-size: 1.125rem; } }
+.article-html > * + * { margin-top: 1.1em; }
+.article-html h1, .article-html h2, .article-html h3, .article-html h4 { font-family: var(--font-display); color: var(--text); line-height: 1.3; scroll-margin-top: 6rem; margin-top: 1.8em; }
+.article-html h1 { font-size: 2em; }
+.article-html h2 { font-size: 1.6em; }
+.article-html h3 { font-size: 1.3em; }
+.article-html h4 { font-size: 1.1em; font-weight: 600; }
+.article-html > :first-child { margin-top: 0; }
+.article-html strong, .article-html b { color: var(--text); font-weight: 600; }
+.article-html a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.article-html ul { list-style: disc; padding-left: 1.5em; }
+.article-html ol { list-style: decimal; padding-left: 1.5em; }
+.article-html li + li { margin-top: 0.4em; }
+.article-html li > p { margin: 0; }
+.article-html li::marker { color: #f26b1d; }
+.article-html blockquote { border-left: 4px solid #fb923c; background: var(--surface-muted); border-radius: 0 1rem 1rem 0; padding: 0.9em 1.2em; font-style: italic; }
+.article-html hr { border: 0; border-top: 1px solid var(--border); margin: 2.2em 0; }
+.article-html pre { background: var(--surface-muted); border-radius: 0.75rem; padding: 1em; overflow-x: auto; font-size: 0.9em; }
+.article-html code { font-size: 0.92em; }
+/* Images and videos sit in the middle of the article, full width on phones */
+.article-html img, .article-html video { display: block; max-width: 100%; height: auto; margin: 1.8em auto; border-radius: 1rem; }
+.article-html video { width: 100%; max-height: 70vh; background: #000; }
+.article-html div[data-youtube-video] { max-width: 100%; margin: 1.8em auto; }
+.article-html iframe { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; margin: 0 auto; border: 0; border-radius: 1rem; }
+
+/* Profile reminder alert bar (ProfileReminder.js): slides down from under the header */
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(-12px); }
+}
+
+/* ---------------- Consult dashboard ---------------- */
+html {
+  background: var(--bg);
+  color: var(--text);
+}
+body {
+  background: var(--bg);
+  color: var(--text);
 }
